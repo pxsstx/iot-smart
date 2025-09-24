@@ -61,6 +61,27 @@ app.post("/api/users/:userId/devices", async (req, res) => {
   }
 });
 
+// ลดอุปกรณ์ให้ user
+app.delete("/api/devices/:deviceId", async (req, res) => {
+  const { deviceId } = req.params;
+
+  try {
+    const { data, error } = await supabase
+      .from("devices")
+      .delete()
+      .eq("id", deviceId)
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    res.status(200).json({ message: "Device deleted successfully", data });
+  } catch (err) {
+    console.error("❌ Error deleting device:", err.message);
+    res.status(400).json({ error: err.message });
+  }
+});
+
 // ดึงอุปกรณ์ทั้งหมดของ user
 app.get("/api/users/:userId/devices", async (req, res) => {
   const { userId } = req.params;

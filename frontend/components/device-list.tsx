@@ -11,7 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useLiffContext } from "@/components/liff-provider";
-import { Monitor, Activity, Trash2, Eye, Plus } from "lucide-react";
+import { Monitor, Activity, Trash2, Eye, Plus, Copy } from "lucide-react";
 import { AddDeviceDialog } from "@/components/add-device-dialog";
 
 interface Device {
@@ -101,6 +101,17 @@ export function DeviceList({ onViewLogs }: DeviceListProps) {
     }
   };
 
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        console.log("Copied:", text);
+      })
+      .catch((err) => {
+        console.error("Failed to copy:", err);
+      });
+  };
+
   if (loading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -124,7 +135,12 @@ export function DeviceList({ onViewLogs }: DeviceListProps) {
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold text-gray-900">Your Devices</h2>
         <div className="flex items-center space-x-4">
-          <Badge variant="secondary">{devices.length} devices</Badge>
+          <Badge
+            variant="secondary"
+            className="h-9 px-4 py-2 has-[>svg]:px-3 text-sm text-gray-600"
+          >
+            {devices.length} devices
+          </Badge>
           <Button onClick={() => setShowAddDialog(true)}>
             <Plus className="mr-2 h-4 w-4" />
             Add Device
@@ -151,7 +167,17 @@ export function DeviceList({ onViewLogs }: DeviceListProps) {
                   {device.status ? "Online" : "Offline"}
                 </Badge>
               </div>
+              <CardDescription>
+                <div className="flex gap-x-4 justify-center items-center">
+                  <p className=" text-gray-400 truncate">{device.id}</p>
+                  <Copy
+                    className="hover:text-gray-800 w-5 h-5"
+                    onClick={() => copyToClipboard(device.id)}
+                  />
+                </div>
+              </CardDescription>
             </CardHeader>
+
             <CardContent>
               <div className="space-y-3">
                 <div className="flex space-x-2">
